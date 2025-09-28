@@ -101,7 +101,7 @@ export function AssessmentForm({ shop, onBack }: AssessmentFormProps) {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center space-x-2">
-                <Link href="/dashboard" className="flex items-center text-sm text-primary hover:underline">
+                <Link href="/audit" className="flex items-center text-sm text-primary hover:underline">
                     <ArrowLeft className="w-4 h-4 mr-4" />
                     Retour
                 </Link>
