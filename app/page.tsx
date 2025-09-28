@@ -28,13 +28,9 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
+
               <Link href="/login">
-                <Button variant="ghost" className="text-foreground">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Sign In</Button>
               </Link>
             </div>
           </div>
