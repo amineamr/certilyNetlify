@@ -3,8 +3,11 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ClipboardCheck, Calendar, Building } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function DashboardContent({ assessments }: { assessments: any[] }) {
+    const router = useRouter()
+
     if (!assessments.length) return <p>Aucun assessment à afficher</p>
 
     const getStatusIcon = (status?: string) => {
@@ -34,7 +37,11 @@ export function DashboardContent({ assessments }: { assessments: any[] }) {
                 const shop = a.shop // already attached
 
                 return (
-                    <Card key={a.id} className="bg-card border-border hover:shadow-md transition-shadow">
+                    <Card
+                        key={a.id}
+                        className="bg-card border-border hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={() => router.push(`/result/${a.id}`)}
+                    >
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
