@@ -18,7 +18,7 @@ interface UserData {
 export function DashboardHeader() {
     const { user } = useUserContext()
     const [localUser, setLocalUser] = useState<UserData | null>(null)
-    const [menuOpen, setMenuOpen] = useState(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const router = useRouter()
 
     useEffect(() => {
@@ -48,53 +48,77 @@ export function DashboardHeader() {
                             <Zap className="w-5 h-5 text-accent-foreground" />
                         </div>
                         <span className="text-xl font-bold text-foreground">Certily</span>
+                            <PWAStatus />
                     </Link>
 
-                    <div className="flex items-center space-x-2">
+
+                    {/* Desktop menu */}
+                    <div className="hidden sm:flex items-center space-x-4">
                         {/* Audit button */}
                         {localUser?.role !== "shop_owner" && (
-                            <>
-                                {/* Full text on desktop */}
-                                <div className="hidden sm:block">
-                                    <Link href="/audit">
-                                        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center">
-                                            <ClipboardCheck className="w-4 h-4 mr-2" />
-                                            Audit
-                                        </Button>
-                                    </Link>
-                                </div>
-                                {/* Icon only on mobile */}
-                                <div className="sm:hidden">
-                                    <Link href="/audit">
-                                        <Button
-                                            size="icon"
-                                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                                            title="Audit"
-                                        >
-                                            <ClipboardCheck className="w-4 h-4" />
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </>
+                            <Link href="/audit">
+                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center">
+                                    <ClipboardCheck className="w-4 h-4 mr-2" />
+                                    Audit
+                                </Button>
+                            </Link>
                         )}
 
-                        {/* Burger menu for all screens */}
+                        {/* Horizontal menu items */}
                         <Button
                             variant="ghost"
-                            onClick={() => setMenuOpen(!menuOpen)}
+                            onClick={() => router.push("/profile")}
+                            className="flex items-center"
+                        >
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            onClick={() => router.push("/settings")}
+                            className="flex items-center"
+                        >
+                            <Settings className="mr-2 h-4 w-4" />
+                            Settings
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            onClick={handleSignOut}
+                            className="flex items-center text-destructive"
+                        >
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sign out
+                        </Button>
+                    </div>
+
+                    {/* Mobile menu */}
+                    <div className="flex sm:hidden items-center space-x-2">
+                        {localUser?.role !== "shop_owner" && (
+                            <Link href="/audit">
+                                <Button
+                                    size="icon"
+                                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                                    title="Audit"
+                                >
+                                    <ClipboardCheck className="w-4 h-4" />
+                                </Button>
+                            </Link>
+                        )}
+
+                        <Button
+                            variant="ghost"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             aria-label="Toggle menu"
                         >
-                            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </Button>
                     </div>
                 </div>
 
-                {/* Collapsible menu */}
-                {menuOpen && (
-                    <div className="mt-2 space-y-2 p-4 border-t border-border/50">
-                        {/* <div className="py-2 px-1">
-                            Collapsible menu <PWAStatus />
-                        </div>*/}
+                {/* Mobile collapsible menu */}
+                {mobileMenuOpen && (
+                    <div className="sm:hidden mt-2 space-y-2 p-4 border-t border-border/50">
                         <Button
                             variant="ghost"
                             className="flex items-center w-full"
@@ -111,7 +135,6 @@ export function DashboardHeader() {
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
                         </Button>
-
                         <Button
                             variant="ghost"
                             className="flex items-center w-full text-destructive"
