@@ -33,10 +33,11 @@ export function DashboardHeader() {
     }, [user])
 
     const handleSignOut = async () => {
+        router.push("/login") // redirect immediately
         const supabase = createClient()
-        await supabase.auth.signOut()
-        router.push("/login")
+        await supabase.auth.signOut() // sign out in background
     }
+
 
     return (
         <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
