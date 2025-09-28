@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ClipboardCheck, Building, TrendingUp, Activity } from "lucide-react"
-import { useUserContext } from "@/context/UserContext"
+import { ClientRoleQueries } from "@/lib/client-role-queries"
 
 interface Assessment {
     id: string
@@ -19,84 +20,159 @@ interface Shop {
     name: string
 }
 
-interface DashboardStatsProps {
-    assessments: Assessment[]
-    shops: Shop[]
+interface UserContext {
+    role: "super_user" | "airport_manager" | "shop_owner"
+    userShops: string[]
+    userAirports: string[]
 }
 
-export function DashboardStats({ assessments, shops }: DashboardStatsProps) {
-    const userContext = useUserContext()
+export function DashboardStats({ serverContext }: { serverContext?: UserContext }) {
+    const [assessments, setAssessments] = useState<Assessment[]>([])
+    const [shops, setShops] = useState<Shop[]>([])
+    const [userContext, setUserContext] = useState<UserContext | null>(serverContext || null)
+    const [loading, setLoading] = useState(!serverContext)
+    const [error, setError] = useState<string | null>(null)
 
-    let filteredShops = shops
-    let filteredAssessments = assessments
+    useEffect(() => {
+        if (serverContext) return // already have context from server
 
-    if (userContext) {
-        if (userContext.role === "shop_owner") {
-            const allowedShops = userContext.userShops.map(String)
-            filteredShops = shops.filter((s) => allowedShops.includes(String(s.id)))
-            filteredAssessments = assessments.filter((a) => allowedShops.includes(String(a.shop_id)))
-        } else if (userContext.role === "airport_manager") {
-            const allowedAirports = userContext.userAirports.map(String)
+        const loadData = async () => {
+            try {
+                setLoading(true)
 
-            // filter shops by airport
-            filteredShops = shops.filter(
-                (s) => s.airport_id && allowedAirports.includes(String(s.airport_id))
-            )
+                const context = await ClientRoleQueries.getUserContext()
+                if (!context) {
+                    setError("Utilisateur non authentifié")
+                    return
+                }
+                setUserContext(context)
 
-            // filter assessments by looking at shops relation OR fallback via shop_id lookup
-            filteredAssessments = assessments.filter((a) => {
-                const airportId =
-                    a.shops?.airport_id ||
-                    shops.find((s) => String(s.id) === String(a.shop_id))?.airport_id
-                return airportId && allowedAirports.includes(String(airportId))
-            })
+                const [assessmentsResult, shopsResult] = await Promise.all([
+                    ClientRoleQueries.getAssessments(context),
+                    ClientRoleQueries.getShops(context),
+                ])
+
+                if (!assessmentsResult || assessmentsResult.error) {
+                    setError(assessmentsResult?.error || "Impossible de récupérer les audits")
+                    return
+                }
+                if (!shopsResult || shopsResult.error) {
+                    setError(shopsResult?.error || "Impossible de récupérer les magasins")
+                    return
+                }
+
+                setAssessments(assessmentsResult.data || [])
+                setShops(shopsResult.data || [])
+            } catch (err) {
+                console.error(err)
+                setError("Une erreur est survenue")
+            } finally {
+                setLoading(false)
+            }
         }
-        // super_user sees everything
+
+        loadData()
+    }, [serverContext])
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[200px]">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-2 text-muted-foreground">Chargement des statistiques...</p>
+                </div>
+            </div>
+        )
     }
 
-    const totalAssessments = filteredAssessments.length
-    const completedAssessments = filteredAssessments.filter(
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-[200px]">
+                <p className="text-red-500">{error}</p>
+            </div>
+        )
+    }
+
+    // -----------------------------
+    // Monthly Target Calculation (Unique Shops)
+    // -----------------------------
+    const TARGET = 64
+    const now = new Date()
+    const currentMonth = now.getMonth()
+    const currentYear = now.getFullYear()
+
+    // get audits for current month
+    const monthlyAssessments = assessments.filter((a) => {
+        const date = new Date(a.created_at)
+        return date.getMonth() === currentMonth && date.getFullYear() === currentYear
+    })
+
+    // deduplicate by shop_id (only count one audit per shop)
+    const uniqueMonthlyShops = new Set(monthlyAssessments.map((a) => a.shop_id))
+    const monthlyCount = uniqueMonthlyShops.size
+
+    const auditsProgress = `${monthlyCount} / ${TARGET}`
+
+    let auditsColor = "text-red-500"
+    if (monthlyCount >= TARGET) {
+        auditsColor = "text-green-500"
+    } else if (monthlyCount >= TARGET * 0.5) {
+        auditsColor = "text-orange-500"
+    }
+
+    // -----------------------------
+    // Other Stats
+    // -----------------------------
+    const completedAssessments = assessments.filter(
         (a) => a.status === "finished" || a.status === "send"
     ).length
-    const totalShops = filteredShops.length
-    const recentAssessments = filteredAssessments.filter((a) => {
-        const assessmentDate = new Date(a.created_at)
-        const weekAgo = new Date()
-        weekAgo.setDate(weekAgo.getDate() - 7)
-        return assessmentDate > weekAgo
-    }).length
 
-    const stats = [
+    const totalShops = shops.length
+
+    const stats: {
+        title: string
+        value: string
+        change: string
+        Icon: any
+        color: string
+    }[] = [
         {
-            title: "Total Audits",
-            value: totalAssessments.toString(),
-            change: `${recentAssessments} cette semaine`,
-            icon: ClipboardCheck,
+            title: "Audits du Mois",
+            value: auditsProgress,
+            change: `Objectif: ${TARGET}`,
+            Icon: ClipboardCheck,
+            color: auditsColor,
         },
         {
             title: "Audits Terminés",
             value: completedAssessments.toString(),
             change: `${Math.round(
-                (completedAssessments / Math.max(totalAssessments, 1)) * 100
+                (completedAssessments / Math.max(assessments.length, 1)) * 100
             )}% du total`,
-            icon: Activity,
+            Icon: Activity,
+            color: "text-foreground",
         },
         {
             title: "Magasins",
             value: totalShops.toString(),
             change: "Magasins enregistrés",
-            icon: Building,
+            Icon: Building,
+            color: "text-foreground",
         },
         {
             title: "Taux de Completion",
             value: `${Math.round(
-                (completedAssessments / Math.max(totalAssessments, 1)) * 100
+                (completedAssessments / Math.max(assessments.length, 1)) * 100
             )}%`,
             change: "Audits terminés",
-            icon: TrendingUp,
+            Icon: TrendingUp,
+            color: "text-foreground",
         },
     ]
 
+    // -----------------------------
+    // Render
+    // -----------------------------
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => (
@@ -105,10 +181,10 @@ export function DashboardStats({ assessments, shops }: DashboardStatsProps) {
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             {stat.title}
                         </CardTitle>
-                        <stat.icon className="h-4 w-4 text-accent" />
+                        {stat.Icon && <stat.Icon className={`h-4 w-4 ${stat.color}`} />}
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+                        <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
                         <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
                     </CardContent>
                 </Card>
