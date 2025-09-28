@@ -1,0 +1,27 @@
+{
+  "name": "Certily - Professional Audit Platform",
+  "short_name": "Certily",
+  "description": "Streamline your audit processes with comprehensive tracking, real-time reporting, and seamless collaboration",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.jpg",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.jpg",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
+}
