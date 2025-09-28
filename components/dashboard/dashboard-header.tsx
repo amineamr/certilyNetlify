@@ -15,15 +15,17 @@ interface UserData {
     role?: string
 }
 
-// Accept role from props or userContext
 export function DashboardHeader({ role }: { role?: string }) {
-    const { user } = useUserContext()
+    const { user, setUser } = useUserContext() // assumes you can clear user context
     const router = useRouter()
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [signingOut, setSigningOut] = useState(false)
 
-    if (!user) return null
+    if (!user || signingOut) {
+        // Render nothing or a blank page while signing out
+        return <div className="min-h-screen bg-background" />
+    }
 
-    // Build localUser using role from props if available
     const localUser: UserData = {
         id: user.id,
         email: user.email || "",
@@ -35,9 +37,21 @@ export function DashboardHeader({ role }: { role?: string }) {
         localUser.role === "super_user" || localUser.role === "airport_manager"
 
     const handleSignOut = async () => {
-        router.push("/login")
+        setSigningOut(true) // immediately hide all UI
+        router.push("/login") // redirect immediately
+
         const supabase = createClient()
-        await supabase.auth.signOut()
+        await supabase.auth.signOut() // sign out in background
+
+        // Clear local user context
+        if (setUser) setUser(null)
+
+        // Clear cookies if needed (SSR-safe)
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`)
+        })
     }
 
     return (
