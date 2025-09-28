@@ -8,7 +8,7 @@ export default async function SettingsPage() {
 
   if (!context) {
     return (
-      <div className="p-8">
+      <div className="max-w-7xl mx-auto p-8">
         <h1 className="text-2xl font-semibold">Settings</h1>
         <p className="mt-4 text-gray-600">You need to log in to view settings.</p>
       </div>
@@ -18,7 +18,7 @@ export default async function SettingsPage() {
   const { user, role } = context
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="max-w-7xl mx-auto p-8 space-y-6">
         {/* Back link */}
         <div className="flex items-center space-x-2">
             <Link href="/dashboard" className="flex items-center text-sm text-primary hover:underline">
