@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Zap, ClipboardCheck, Menu, X, User, Settings, LogOut } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { PWAStatus } from "@/components/pwa/pwa-status"
 
@@ -15,29 +15,30 @@ interface UserData {
     role?: string
 }
 
-export function DashboardHeader() {
+// Accept role from props or userContext
+export function DashboardHeader({ role }: { role?: string }) {
     const { user } = useUserContext()
-    const [localUser, setLocalUser] = useState<UserData | null>(null)
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const router = useRouter()
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-    useEffect(() => {
-        if (user) {
-            setLocalUser({
-                id: user.id,
-                email: user.email || "",
-                name: user.user_metadata?.name || user.email?.split("@")[0],
-                role: user.user_metadata?.role,
-            })
-        }
-    }, [user])
+    if (!user) return null
 
-    const handleSignOut = async () => {
-        router.push("/login") // redirect immediately
-        const supabase = createClient()
-        await supabase.auth.signOut() // sign out in background
+    // Build localUser using role from props if available
+    const localUser: UserData = {
+        id: user.id,
+        email: user.email || "",
+        name: user.user_metadata?.name || user.email?.split("@")[0],
+        role: role || user.user_metadata?.role,
     }
 
+    const canAudit =
+        localUser.role === "super_user" || localUser.role === "airport_manager"
+
+    const handleSignOut = async () => {
+        router.push("/login")
+        const supabase = createClient()
+        await supabase.auth.signOut()
+    }
 
     return (
         <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -49,14 +50,12 @@ export function DashboardHeader() {
                             <Zap className="w-5 h-5 text-accent-foreground" />
                         </div>
                         <span className="text-xl font-bold text-foreground">Certily</span>
-                            <PWAStatus />
+                        <PWAStatus />
                     </Link>
-
 
                     {/* Desktop menu */}
                     <div className="hidden sm:flex items-center space-x-4">
-                        {/* Audit button */}
-                        {localUser?.role !== "shop_owner" && (
+                        {canAudit && (
                             <Link href="/audit">
                                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center">
                                     <ClipboardCheck className="w-4 h-4 mr-2" />
@@ -65,7 +64,6 @@ export function DashboardHeader() {
                             </Link>
                         )}
 
-                        {/* Horizontal menu items */}
                         <Button
                             variant="ghost"
                             onClick={() => router.push("/profile")}
@@ -95,7 +93,7 @@ export function DashboardHeader() {
 
                     {/* Mobile menu */}
                     <div className="flex sm:hidden items-center space-x-2">
-                        {localUser?.role !== "shop_owner" && (
+                        {canAudit && (
                             <Link href="/audit">
                                 <Button
                                     size="icon"

@@ -10,7 +10,7 @@ export default async function DashboardPage() {
     const context = await ServerRoleQueries.getUserContext();
     if (!context) redirect("/login");
 
-    // Fetch shops & assessments (RLS applies automatically in backend)
+    // Fetch shops & assessments (RLS applies automatically)
     const { data: assessments } = await ServerRoleQueries.getAssessments();
     const { data: shops } = await ServerRoleQueries.getShops();
 
@@ -18,8 +18,11 @@ export default async function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <DashboardHeader />
+            {/* DashboardHeader now conditionally shows the audit button */}
+            <DashboardHeader role={context.role} />
 
+
+            {/* Main content based on role */}
             {role === "super_user" || role === "airport_manager" ? (
                 <DashboardPageClient
                     initialAssessments={assessments || []}
@@ -29,7 +32,11 @@ export default async function DashboardPage() {
             ) : role === "airport_worker" ? (
                 <DashboardWorker userContext={context} shops={shops || []} />
             ) : role === "shop_owner" ? (
-                <DashboardOwner userContext={context} shops={shops || []} assessments={assessments || []} />
+                <DashboardOwner
+                    userContext={context}
+                    shops={shops || []}
+                    assessments={assessments || []}
+                />
             ) : (
                 <div className="p-6 text-center text-gray-600">
                     <p>Role not recognized. Please contact an administrator.</p>
