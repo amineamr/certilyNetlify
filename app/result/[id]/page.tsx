@@ -9,6 +9,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Building, Calendar, ClipboardCheck } from "lucide-react"
 import { CameraSection } from "@/components/audit/camera-section"
 import { Label } from "@/components/ui/label"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 interface AuditPageProps {
     params: { id: string }
@@ -85,6 +87,13 @@ export default function AuditPage({ params }: AuditPageProps) {
 
     return (
         <div className="max-w-3xl mx-auto p-6 space-y-6">
+            {/* Back link */}
+            <div className="flex items-center space-x-2">
+                <Link href="/dashboard" className="flex items-center text-sm text-primary hover:underline">
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    Retour
+                </Link>
+            </div>
             {/* Shop Info */}
             <Card className="bg-card border-border shadow-sm">
                 <CardHeader>
