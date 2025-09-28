@@ -3,22 +3,12 @@ import { redirect } from "next/navigation"
 import { ServerRoleQueries } from "@/lib/server-role-queries"
 import { AuditClient } from "./audit-client"
 
-export default async function AuditPage() {
-  // Get the current user context
-  const context = await ServerRoleQueries.getUserContext()
+export default async function AuditIndexPage() {
+    const context = await ServerRoleQueries.getUserContext()
+    if (!context) redirect("/login")
 
-  if (!context) {
-    // Not authenticated, redirect to login
-    redirect("/login")
-  }
+    const { data: shops, error } = await ServerRoleQueries.getShops()
+    if (error) console.error("Error fetching shops:", error)
 
-  // Fetch shops accessible by the user
-  const { data: shops, error: shopsError } = await ServerRoleQueries.getShops()
-
-  if (shopsError) {
-    console.error("Error fetching shops:", shopsError)
-    // Optionally, you can throw or redirect to an error page
-  }
-
-  return <AuditClient shops={shops || []} userRole={context.role} />
+    return <AuditClient shops={shops || []} />
 }
