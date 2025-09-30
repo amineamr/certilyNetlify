@@ -95,107 +95,108 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="flex items-center space-x-2 mb-6">
-                <Smartphone className="w-6 h-6 text-accent" />
-                <span className="text-accent font-medium">Mobile-First Auditing</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
-                Streamlined audits. Actionable insights.
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Conduct comprehensive audits on any device, capture evidence with photos, and generate detailed reports
-                instantly. Perfect for quality assurance, compliance checks, and operational assessments.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <span className="text-foreground">Offline audit capabilities</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <span className="text-foreground">Photo evidence capture</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <span className="text-foreground">Real-time sync & reporting</span>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <Card className="p-8 bg-card border-border">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Audit Progress</span>
-                    <span className="text-sm text-accent font-medium">85% Complete</span>
-                  </div>
-                  <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full w-4/5 bg-accent rounded-full"></div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 pt-4">
+        {/* Features Section */}
+        <section id="features" className="py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
-                      <div className="text-2xl font-bold text-foreground">47</div>
-                      <div className="text-sm text-muted-foreground">Locations Audited</div>
+                        <div className="flex items-center space-x-2 mb-6">
+                            <Smartphone className="w-6 h-6 text-accent" />
+                            <span className="text-accent font-medium">Audit Anywhere</span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+                            Reduce complexity. Save time.
+                        </h2>
+                        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                            With NFC one-scan start, photo capture, and embedded dashboards, Certily
+                            makes audits effortless for both staff and managers. Results sync instantly
+                            across Web, iOS, and Android.
+                        </p>
+                        <div className="space-y-4">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-2 h-2 bg-accent rounded-full"></div>
+                                <span className="text-foreground">Start audits instantly with NFC</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <div className="w-2 h-2 bg-accent rounded-full"></div>
+                                <span className="text-foreground">Seamless BI integration</span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <div className="w-2 h-2 bg-accent rounded-full"></div>
+                                <span className="text-foreground">Cross-platform, no setup</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold text-foreground">12</div>
-                      <div className="text-sm text-muted-foreground">Issues Found</div>
+                    <div className="relative">
+                        <Card className="p-8 bg-card border-border">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">Audit Progress</span>
+                                    <span className="text-sm text-accent font-medium">85% Complete</span>
+                                </div>
+                                <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                                    <div className="h-full w-4/5 bg-accent rounded-full"></div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 pt-4">
+                                    <div>
+                                        <div className="text-2xl font-bold text-foreground">47</div>
+                                        <div className="text-sm text-muted-foreground">Shops Audited</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-2xl font-bold text-foreground">12</div>
+                                        <div className="text-sm text-muted-foreground">Issues Solved</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
                     </div>
-                  </div>
                 </div>
-              </Card>
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-20 border-t border-border/50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance">
-            Transform your audit process. <span className="text-accent">Collaborate seamlessly</span> with your team and
-            stakeholders.
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            Everything you need to conduct professional audits and maintain compliance standards.
-          </p>
-          <Link href="/login">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg">
-              Start Auditing Today
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </Link>
-        </div>
-      </section>
+        {/* CTA Section */}
+        <section className="py-20 border-t border-border/50">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance">
+                    From audit to insight. <span className="text-accent">All in one place</span>.
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                    Certily reduces complexity and speeds up retail & airport operations—so managers and staff
+                    can focus on improving the passenger experience.
+                </p>
+                <Link href="/login">
+                    <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg">
+                        Start Today
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                </Link>
+            </div>
+        </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-accent-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Certily</span>
+        {/* Footer */}
+        <footer className="border-t border-border/50 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col md:flex-row justify-between items-center">
+                    <div className="flex items-center space-x-2 mb-4 md:mb-0">
+                        <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                            <Zap className="w-5 h-5 text-accent-foreground" />
+                        </div>
+                        <span className="text-xl font-bold text-foreground">Certily</span>
+                    </div>
+                    <div className="flex items-center space-x-6">
+                        <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                            Privacy
+                        </Link>
+                        <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+                            Terms
+                        </Link>
+                        <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                            Contact
+                        </Link>
+                    </div>
+                </div>
             </div>
-            <div className="flex items-center space-x-6">
-              <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                Privacy
-              </Link>
-              <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                Terms
-              </Link>
-              <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+        </footer>
     </div>
   )
 }
