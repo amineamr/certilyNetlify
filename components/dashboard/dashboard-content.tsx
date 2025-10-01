@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 export function DashboardContent({ assessments }: { assessments: any[] }) {
     const router = useRouter()
 
-    if (!assessments.length) return <p>Aucun assessment à afficher</p>
+    if (!assessments.length) return <p>Aucun Audit à afficher</p>
 
     const getStatusIcon = (status?: string) => {
         switch (status) {
