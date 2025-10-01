@@ -54,50 +54,54 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
 
+    // Shops that already have assessments this month
     const auditedThisMonth = useMemo(() => {
         const filtered = assessments.filter((a) => {
             const date = new Date(a.created_at)
             return date.getMonth() === currentMonth && date.getFullYear() === currentYear
         })
-
-        console.log("All assessments:", assessments)
-        console.log("Filtered assessments this month:", filtered)
-        console.log("Shop IDs audited this month:", filtered.map((a) => a.shop_id))
-
         return new Set(filtered.map((a) => a.shop_id))
     }, [assessments, currentMonth, currentYear])
 
+    // Shops used for dropdown options (monthly checkbox applied)
+    const monthlyFilteredShops = useMemo(() => {
+        return shops.filter((shop) => {
+            if (!activeFilters.monthly) return true
+            return shop.is_monthly === true && !auditedThisMonth.has(shop.id)
+        })
+    }, [shops, activeFilters.monthly, auditedThisMonth])
 
+    // Available locations & brands based on monthly filter + other filter
+    const availableLocations = useMemo(() => {
+        return Array.from(
+            new Set(
+                monthlyFilteredShops
+                    .filter((s) => !activeFilters.brand || s.brand === activeFilters.brand)
+                    .map((s) => s.location)
+            )
+        )
+    }, [monthlyFilteredShops, activeFilters.brand])
+
+    const availableBrands = useMemo(() => {
+        return Array.from(
+            new Set(
+                monthlyFilteredShops
+                    .filter((s) => !activeFilters.location || s.location === activeFilters.location)
+                    .map((s) => s.brand)
+            )
+        )
+    }, [monthlyFilteredShops, activeFilters.location])
+
+    // Shops displayed in the grid (all filters combined)
     const filteredShops = useMemo(() => {
-        const result = shops.filter((shop) => {
-            const locationMatch =
-                !activeFilters.location || shop.location === activeFilters.location
-            const brandMatch =
-                !activeFilters.brand || shop.brand === activeFilters.brand
-
-            const monthlyMatch = !activeFilters.monthly
-                ? true
-                : shop.is_monthly === true && !auditedThisMonth.has(shop.id)
-
+        return shops.filter((shop) => {
+            const locationMatch = !activeFilters.location || shop.location === activeFilters.location
+            const brandMatch = !activeFilters.brand || shop.brand === activeFilters.brand
+            const monthlyMatch =
+                !activeFilters.monthly || (shop.is_monthly === true && !auditedThisMonth.has(shop.id))
             return locationMatch && brandMatch && monthlyMatch
         })
-
-        console.log("Active filters:", activeFilters)
-        console.log("Filtered shops:", result)
-
-        return result
     }, [shops, activeFilters, auditedThisMonth])
-
-
-    // Available filters
-    const availableLocations = useMemo(
-        () => Array.from(new Set(shops.map((s) => s.location))),
-        [shops]
-    )
-    const availableBrands = useMemo(
-        () => Array.from(new Set(shops.map((s) => s.brand))),
-        [shops]
-    )
 
     return (
         <div className="space-y-6">
@@ -179,16 +183,10 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
                         id="monthly"
                         checked={activeFilters.monthly}
                         onCheckedChange={(val) =>
-                            setActiveFilters((prev) => ({
-                                ...prev,
-                                monthly: Boolean(val),
-                            }))
+                            setActiveFilters((prev) => ({ ...prev, monthly: Boolean(val) }))
                         }
                     />
-                    <label
-                        htmlFor="monthly"
-                        className="text-sm font-medium leading-none cursor-pointer"
-                    >
+                    <label htmlFor="monthly" className="text-sm font-medium leading-none cursor-pointer">
                         Suivi mensuel
                     </label>
                 </div>
@@ -199,9 +197,7 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
                 {activeFilters.location && (
                     <span
                         className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full cursor-pointer hover:bg-blue-200 transition"
-                        onClick={() =>
-                            setActiveFilters((prev) => ({ ...prev, location: null }))
-                        }
+                        onClick={() => setActiveFilters((prev) => ({ ...prev, location: null }))}
                     >
             {activeFilters.location} <span className="font-bold">&times;</span>
           </span>
@@ -209,9 +205,7 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
                 {activeFilters.brand && (
                     <span
                         className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full cursor-pointer hover:bg-green-200 transition"
-                        onClick={() =>
-                            setActiveFilters((prev) => ({ ...prev, brand: null }))
-                        }
+                        onClick={() => setActiveFilters((prev) => ({ ...prev, brand: null }))}
                     >
             {activeFilters.brand} <span className="font-bold">&times;</span>
           </span>
@@ -219,9 +213,7 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
                 {activeFilters.monthly && (
                     <span
                         className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-purple-100 text-purple-800 rounded-full cursor-pointer hover:bg-purple-200 transition"
-                        onClick={() =>
-                            setActiveFilters((prev) => ({ ...prev, monthly: false }))
-                        }
+                        onClick={() => setActiveFilters((prev) => ({ ...prev, monthly: false }))}
                     >
             Suivi mensuel <span className="font-bold">&times;</span>
           </span>
