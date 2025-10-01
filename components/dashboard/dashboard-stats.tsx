@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ClipboardCheck, Building, TrendingUp, Activity } from "lucide-react"
 
@@ -37,11 +36,10 @@ export function DashboardStats({
 
     const uniqueMonthlyShops = new Set(monthlyAssessments.map((a) => a.shop_id))
     const monthlyCount = uniqueMonthlyShops.size
-    const auditsProgress = `${monthlyCount} / ${TARGET}`
 
     let auditsColor = "text-red-500"
     if (monthlyCount >= TARGET) auditsColor = "text-green-500"
-    else if (monthlyCount >= TARGET * 0.5) auditsColor = "text-orange-500"
+    else if (monthlyCount >= TARGET * 0.3) auditsColor = "text-orange-500"
 
     // Other stats
     const completedAssessments = assessments.filter(
@@ -50,13 +48,6 @@ export function DashboardStats({
     const totalShops = shops.length
 
     const stats = [
-        {
-            title: "Audits du Mois",
-            value: auditsProgress,
-            change: `Objectif: ${TARGET}`,
-            Icon: ClipboardCheck,
-            color: auditsColor,
-        },
         {
             title: "Audits Terminés",
             value: completedAssessments.toString(),
@@ -82,6 +73,36 @@ export function DashboardStats({
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Custom progress card for Audits du Mois */}
+            <Card className="p-8 bg-card border-border">
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Audits du Mois</span>
+                        <span className={`text-sm font-medium ${auditsColor}`}>
+              {Math.round(Math.min((monthlyCount / TARGET) * 100, 100))}%
+
+            </span>
+                    </div>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-accent rounded-full"
+                            style={{ width: `${Math.min((monthlyCount / TARGET) * 100, 100)}%` }}
+                        ></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                        <div>
+                            <div className="text-2xl font-bold text-foreground">{monthlyCount}</div>
+                            <div className="text-sm text-muted-foreground">Réalisé</div>
+                        </div>
+                        <div>
+                            <div className="text-2xl font-bold text-foreground">{TARGET - monthlyCount}</div>
+                            <div className="text-sm text-muted-foreground">Restant</div>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+
+            {/* Other stats */}
             {stats.map((stat, index) => (
                 <Card key={index} className="bg-card border-border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
