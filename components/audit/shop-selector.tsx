@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import { Switch } from "@/components/ui/switch"
+
 import {
     Card,
     CardHeader,
@@ -179,14 +181,15 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
 
                 {/* Monthly filter */}
                 <div className="flex items-center space-x-2">
-                    <Checkbox
-                        id="monthly"
-                        checked={activeFilters.monthly}
+                    <Switch id="monthly" checked={activeFilters.monthly}
                         onCheckedChange={(val) =>
                             setActiveFilters((prev) => ({ ...prev, monthly: Boolean(val) }))
                         }
                     />
-                    <label htmlFor="monthly" className="text-sm font-medium leading-none cursor-pointer">
+                    <label
+                        htmlFor="monthly"
+                        className="text-sm font-medium leading-none cursor-pointer"
+                    >
                         Suivi mensuel
                     </label>
                 </div>
