@@ -7,8 +7,14 @@ export default async function AuditIndexPage() {
     const context = await ServerRoleQueries.getUserContext()
     if (!context) redirect("/login")
 
-    const { data: shops, error } = await ServerRoleQueries.getShops()
-    if (error) console.error("Error fetching shops:", error)
+    // Fetch shops
+    const { data: shops, error: shopsError } = await ServerRoleQueries.getShops()
+    if (shopsError) console.error("Error fetching shops:", shopsError)
 
-    return <AuditClient shops={shops || []} />
+    // Fetch assessments
+    const { data: assessments, error: assessmentsError } =
+        await ServerRoleQueries.getAssessments()
+    if (assessmentsError) console.error("Error fetching assessments:", assessmentsError)
+
+    return <AuditClient shops={shops || []} assessments={assessments || []} />
 }
