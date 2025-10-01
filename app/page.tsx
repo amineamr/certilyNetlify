@@ -23,6 +23,9 @@ export default function HomePage() {
               <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
                 About
               </Link>
+                <Link href="#Contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                    Contact Us
+                </Link>
             </div>
             <div className="flex items-center space-x-4">
 
