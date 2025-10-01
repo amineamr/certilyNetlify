@@ -64,7 +64,7 @@ export function DashboardHeader({ role }: { role?: string }) {
                             <Zap className="w-5 h-5 text-accent-foreground" />
                         </div>
                         <span className="text-xl font-bold text-foreground">Certily</span>
-                        <PWAStatus />
+                        {/*<PWAStatus />*/}
                     </Link>
 
                     {/* Desktop menu */}
