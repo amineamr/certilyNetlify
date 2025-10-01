@@ -12,7 +12,7 @@ interface Assessment {
 
 interface Shop {
     id: string
-    is_monthly?: boolean   // 👈 flag mensuel sur la table shops
+    is_monthly?: boolean
 }
 
 export function DashboardStats({
@@ -26,17 +26,14 @@ export function DashboardStats({
     const currentMonth = now.getMonth()
     const currentYear = now.getFullYear()
 
-    // ✅ Objectif = nombre total de shops avec is_monthly = true
     const monthlyShops = shops.filter((s) => s.is_monthly)
     const TARGET = monthlyShops.length
 
-    // ✅ Audits réalisés ce mois-ci pour ces shops
     const monthlyAssessments = assessments.filter((a) => {
         const date = new Date(a.created_at)
         return date.getMonth() === currentMonth && date.getFullYear() === currentYear
     })
 
-    // 👇 On ne garde que les shops qui sont dans monthlyShops
     const monthlyShopIds = new Set(monthlyShops.map((s) => s.id))
     const auditedMonthlyShops = new Set(
         monthlyAssessments
@@ -46,14 +43,10 @@ export function DashboardStats({
 
     const monthlyCount = auditedMonthlyShops.size
 
-    // Couleurs de progression
     let auditsColor = "text-red-500"
     if (monthlyCount >= TARGET) auditsColor = "text-green-500"
     else if (monthlyCount >= TARGET * 0.3) auditsColor = "text-orange-500"
 
-    // -----------------------------
-    // Autres stats
-    // -----------------------------
     const completedAssessments = assessments.filter(
         (a) => a.status === "finished" || a.status === "send"
     ).length
@@ -95,13 +88,12 @@ export function DashboardStats({
                     <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Audits du Mois</span>
                         <span className={`text-sm font-medium ${auditsColor}`}>
-              {TARGET > 0
-                  ? Math.round(Math.min((monthlyCount / TARGET) * 100, 100))
-                  : 0}
-                            %
-            </span>
+        {TARGET > 0 ? Math.round(Math.min((monthlyCount / TARGET) * 100, 100)) : 0}%
+      </span>
                     </div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+
+                    {/* Progress bar */}
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden relative">
                         <div
                             className="h-full bg-accent rounded-full"
                             style={{
@@ -109,26 +101,29 @@ export function DashboardStats({
                             }}
                         ></div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                        <div>
-                            <div className="text-2xl font-bold text-foreground">
-                                {monthlyCount}
-                            </div>
-                            <div className="text-sm text-muted-foreground">Réalisé</div>
+
+                    <div className="flex justify-between pt-2">
+                        {/* Réalisé */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl font-bold text-foreground">{monthlyCount}</span>
+                            <span className="text-sm text-muted-foreground">Réalisé</span>
                         </div>
-                        <div>
-                            <div className="text-2xl font-bold text-foreground">
-                                {Math.max(TARGET - monthlyCount, 0)}
-                            </div>
-                            <div className="text-sm text-muted-foreground">Restant</div>
+
+                        {/* Restant */}
+                        <div className="flex flex-col items-center">
+    <span className="text-2xl font-bold text-foreground">
+      {Math.max(TARGET - monthlyCount, 0)}
+    </span>
+                            <span className="text-sm text-muted-foreground">Restant</span>
                         </div>
                     </div>
                 </div>
             </Card>
 
-            {/* Autres stats */}
+
+            {/* Other stats hidden on small screens */}
             {stats.map((stat, index) => (
-                <Card key={index} className="bg-card border-border">
+                <Card key={index} className="hidden md:flex bg-card border-border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             {stat.title}
