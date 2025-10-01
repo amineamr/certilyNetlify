@@ -48,7 +48,7 @@ export function ShopSelector({ shops, assessments = [] }: ShopSelectorProps) {
     }>({
         location: null,
         brand: null,
-        monthly: false,
+        monthly: true,
     })
 
     // Current month/year
